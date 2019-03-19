@@ -1,12 +1,14 @@
 const express = require('express')
 
-const Posts = require('../data/db')
+const db = require('../data/db')
 
 const router = express.Router();
 
+//READ of CRUD operations
+
 router.get('/', (req, res) => {
     //Returns an array of all the post objects contained in the database.
-    Posts
+    db
     .find()
     .then(posts => {
         res.status(200).json(posts)
@@ -16,9 +18,22 @@ router.get('/', (req, res) => {
     })
 }) //WORKING NOW
 
-router.post('/api/posts', (req, res) => {
+//CREATE of CRUD operations
 
-})
+router.post('/', (req, res) => {
+    const newPost = req.body;
+    const { title, contents } = newPost
+    title && contents ? 
+    db
+    .insert(newPost)
+    .then(post => {
+        res.status(201).json(post)
+    })
+    .catch(err => {
+        res.status(500).json({ error: "There was an error while saving the post to the database" })
+    }) :
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+}) //WORKING NOW
 
 
 router.get('/api/posts/:id', (req, res) => {
